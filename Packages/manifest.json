@@ -1,5 +1,6 @@
 {
   "dependencies": {
+    "com.siccity.gltfutility": "https://github.com/siccity/gltfutility.git",
     "com.unity.charactercontroller": "1.2.4",
     "com.unity.collab-proxy": "2.6.0",
     "com.unity.feature.characters-animation": "1.0.0",
