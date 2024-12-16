@@ -23413,7 +23413,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   reachDistance: 3
-  crosshairImage: {fileID: 0}
+  crosshairImage: {fileID: 1719078201}
   defaultCrosshairColor: {r: 1, g: 1, b: 1, a: 1}
   interactableCrosshairColor: {r: 0, g: 1, b: 0, a: 1}
 --- !u!1 &797969349
