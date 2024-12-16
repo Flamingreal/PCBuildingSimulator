@@ -7,7 +7,7 @@ A 3D game built in Unity where users learn how to assemble a PC by dragging and 
 ## **Project Overview**
 
 - **Goal**: Create an educational and interactive PC building simulator.
-- **Technologies Used**: Unity (version: 2022.3.5f1 LTS), C#, GitLab for version control.
+- **Technologies Used**: Unity (version: 2022.3.51f1 LTS), C#, GitLab for version control.
 - **Team Members**:
   - **Zhiyuan Xu**: Drag-and-drop mechanics.
   - **Hanyu Liu**: Documentation and screenshots.
@@ -37,7 +37,7 @@ A 3D game built in Unity where users learn how to assemble a PC by dragging and 
 1. Clone the repository:
    ```bash
    git clone https://csgitlab.reading.ac.uk/aa012221/pcbuildingsimulator.git
-2. Open the project in Unity 2022.3.5f1 (LTS).
+2. Open the project in Unity 2022.3.51f1 (LTS).
 3. Install any required Unity packages if prompted.
 4. Ensure you’re working on your assigned branch.
 
