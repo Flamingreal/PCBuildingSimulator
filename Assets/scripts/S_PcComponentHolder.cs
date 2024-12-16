@@ -1,50 +1,73 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
-[RequireComponent(typeof(MeshFilter))]
-[RequireComponent(typeof(MeshRenderer))]
 [RequireComponent(typeof(BoxCollider))]
 public class S_PcComponentHolder : MonoBehaviour
 {
     [Header("Component Selecting")]
-    [Tooltip("Select the component you want to link with this trigger")]
+    [Tooltip("Select the component type this slot accepts")]
     [SerializeField]
     private e_Components m_Component;
 
     [SerializeField]
-    private S_PcComponent m_PcComponentScript;
+    private GameObject highlightModel; // 插槽高亮模型
 
-    [Space(5)]
-    [Header("Debug Information")]
-    [SerializeField]
-    private Material m_SelectedMaterial;
-
-    private MeshRenderer m_MeshRenderer;
+    private bool isOccupied = false;
 
     public e_Components G_Component
     {
         get { return m_Component; }
     }
-    public MeshRenderer G_MeshRenderer
-    {
-        get { return m_MeshRenderer; }
-    }
-    public S_PcComponent S_PcComponentScript
-    {
-        set { m_PcComponentScript = value; }
-    }
 
     void Start()
     {
-        m_MeshRenderer = GetComponent<MeshRenderer>();
+        if (highlightModel == null)
+        {
+            highlightModel = transform.Find("HighlightBox")?.gameObject; // 自动查找子对象
+        }
+
+        if (highlightModel != null)
+        {
+            highlightModel.GetComponent<MeshRenderer>().enabled = false; // 默认隐藏
+        }
+        else
+        {
+            Debug.LogWarning("Highlight model reference is missing!");
+        }
     }
 
-    void Update()
+    public bool IsCorrectComponentNearby()
     {
-        if (m_PcComponentScript == null || (m_PcComponentScript != null && m_MeshRenderer.enabled && !m_PcComponentScript.G_PickedUp))
+        return !isOccupied;
+    }
+
+    public void SetOccupied(bool occupied)
+    {
+        isOccupied = occupied;
+        if (highlightModel != null)
         {
-            m_MeshRenderer.enabled = false;
+            highlightModel.GetComponent<MeshRenderer>().enabled = !occupied;
+        }
+    }
+
+    void OnTriggerEnter(Collider other)
+    {
+        if (!isOccupied && other.TryGetComponent(out S_PcComponent component) && component.GetComponentType() == m_Component)
+        {
+            if (highlightModel != null)
+            {
+                highlightModel.GetComponent<MeshRenderer>().enabled = true; // 显示高亮
+            }
+        }
+    }
+
+    void OnTriggerExit(Collider other)
+    {
+        if (!isOccupied && other.TryGetComponent(out S_PcComponent component) && component.GetComponentType() == m_Component)
+        {
+            if (highlightModel != null)
+            {
+                highlightModel.GetComponent<MeshRenderer>().enabled = false; // 隐藏高亮
+            }
         }
     }
 }

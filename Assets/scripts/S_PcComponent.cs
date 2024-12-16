@@ -11,34 +11,84 @@ public class S_PcComponent : MonoBehaviour
     [SerializeField]
     private e_Components m_Component;
 
-    private bool m_PickedUp;
+    [Header("Movement Settings")]
+    [SerializeField]
+    private float m_MouseSensitivity = 100f; // 鼠标滚轮调整距离的灵敏度
+
+    private S_PcComponentHolder m_CurrentHolder;
+
+    [Space(5)]
+    [Header("Debug Information:")]
+    [SerializeField]
+    private bool m_PickedUp; // 表示组件是否被拾取
 
     public bool G_PickedUp
     {
         get { return m_PickedUp; }
     }
 
+    void Start()
+    {
+        m_CurrentHolder = null;
+    }
+
+    public e_Components GetComponentType()
+    {
+        return m_Component;
+    }
+
     public void PickUp()
     {
-        if (!m_PickedUp)
-        {
-            m_PickedUp = true;
-            transform.parent = Camera.main.transform; // 将组件附加到相机
-            transform.localPosition = new Vector3(0, 0, 2); // 将物体放置在玩家前方
-            transform.localRotation = Quaternion.identity; // 重置旋转
-            GetComponent<Rigidbody>().isKinematic = true; // 禁用物理模拟
-            UnityEngine.Debug.Log($"{name} picked up!");
-        }
+        m_PickedUp = true;
+        GetComponent<Rigidbody>().isKinematic = true; // 禁用物理效果
+        Debug.Log($"{name} picked up!");
     }
 
     public void Drop()
     {
-        if (m_PickedUp)
+        if (m_CurrentHolder != null && m_CurrentHolder.IsCorrectComponentNearby())
+        {
+            Connect(m_CurrentHolder.gameObject);
+            Debug.Log($"{name} successfully placed!");
+        }
+        else
         {
             m_PickedUp = false;
-            transform.parent = null; // 解除父子关系
-            GetComponent<Rigidbody>().isKinematic = false; // 恢复物理模拟
-            UnityEngine.Debug.Log($"{name} dropped!");
+            GetComponent<Rigidbody>().isKinematic = false; // 启用物理效果
+            Debug.LogWarning($"{name} dropped incorrectly.");
+        }
+    }
+
+    public void AdjustDistance(float scroll)
+    {
+        float adjustedDistance = scroll * m_MouseSensitivity * Time.deltaTime; // 调整距离的灵敏度
+        Vector3 newPosition = transform.localPosition + new Vector3(0, 0, adjustedDistance);
+        transform.localPosition = newPosition;
+    }
+
+    public void Connect(GameObject slot)
+    {
+        transform.parent = slot.transform;
+        transform.localPosition = Vector3.zero;
+        transform.localRotation = Quaternion.identity;
+        m_PickedUp = false;
+    }
+
+    void OnTriggerEnter(Collider collide)
+    {
+        if (collide.TryGetComponent(out S_PcComponentHolder holder) && holder.G_Component == m_Component)
+        {
+            m_CurrentHolder = holder;
+            Debug.Log($"Component is near a valid holder: {holder.name}");
+        }
+    }
+
+    void OnTriggerExit(Collider collide)
+    {
+        if (collide.TryGetComponent(out S_PcComponentHolder holder) && holder == m_CurrentHolder)
+        {
+            m_CurrentHolder = null;
+            Debug.Log("Component left the holder.");
         }
     }
 }
